@@ -10,7 +10,9 @@
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Usage
-##GET Request
+
+#GET Request
+
 NSURL *url = [NSURL URLWithString:@""];
     //
     TCRequest *request = [TCRequest requestWithURL:url];
