@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'TCKit_Example' do
+  pod 'TCKit', :path => '../'
+
+  target 'TCKit_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
