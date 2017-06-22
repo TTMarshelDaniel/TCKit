@@ -4,8 +4,6 @@ target 'TCKit_Example' do
   pod 'TCKit', :path => '../'
 
   target 'TCKit_Tests' do
-    inherit! :search_paths
-
-    
+    pod 'TCKit', :path => '../'
   end
 end

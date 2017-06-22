@@ -6,7 +6,8 @@
 //  Copyright (c) 2017 ttmdaniel@gmail.com. All rights reserved.
 //
 
-#import "TCViewController.h"
+#import "TCViewController.h" 
+#import "Sample.h"
 
 @interface TCViewController ()
 
@@ -17,7 +18,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    [Sample run];
 }
 
 - (void)didReceiveMemoryWarning

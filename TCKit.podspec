@@ -9,32 +9,22 @@
 Pod::Spec.new do |s|
   s.name             = 'TCKit'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of TCKit.'
+  s.summary          = 'simple JSON Request and JSON Response with TCKit.'
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
-  s.description      = <<-DESC
-TODO: Add long description of the pod here.
-                       DESC
-
-  s.homepage         = 'https://github.com/ttmdaniel@gmail.com/TCKit'
+  s.homepage         = 'https://github.com/TTMarshelDaniel/TCKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'ttmdaniel@gmail.com' => 'ttmdaniel@gmail.com' }
-  s.source           = { :git => 'https://github.com/ttmdaniel@gmail.com/TCKit.git', :tag => s.version.to_s }
+  s.author           = { 'T T Marshel Daniel' => 'ttmdaniel@gmail.com' }
+  s.source           = { :git => 'https://github.com/TTMarshelDaniel/TCKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
 
   s.source_files = 'TCKit/Classes/**/*'
   
-  # s.resource_bundles = {
-  #   'TCKit' => ['TCKit/Assets/*.png']
-  # }
+   s.resource_bundles = {
+     'TCKit' => ['TCKit/Assets/*.png']
+   }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'

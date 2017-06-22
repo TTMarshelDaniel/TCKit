@@ -24,6 +24,7 @@
 		81C87E9CE6089A8C4C333479 /* Pods_TCKit_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44D9AC61CAD33600A90C30CD /* Pods_TCKit_Example.framework */; };
 		8533571FDBC182EB1E86C50F /* Pods_TCKit_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41C53D883D1D8BBD64FECBD0 /* Pods_TCKit_Tests.framework */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
+		8DF3C1BF4A9EEA0DA9165D7D /* Pods_TCKit_Example_TCKit_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17BFEF8CD0D73BC4098A463C /* Pods_TCKit_Example_TCKit_Tests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,10 +38,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		15CD489E1D936A1228655CC1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		15CD489E1D936A1228655CC1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		17BFEF8CD0D73BC4098A463C /* Pods_TCKit_Example_TCKit_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCKit_Example_TCKit_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		29EBA7B655FF51BD3E25D35A /* Pods-TCKit_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCKit_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCKit_Tests/Pods-TCKit_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		2A1F31FF083E50CDE8D5B6AC /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		2A1F31FF083E50CDE8D5B6AC /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		36A97CCAD52788AB75CA1F45 /* Pods-TCKit_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCKit_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCKit_Tests/Pods-TCKit_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		3EC534D5B3C7E116B3FB0A64 /* Pods-TCKit_Example-TCKit_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCKit_Example-TCKit_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCKit_Example-TCKit_Tests/Pods-TCKit_Example-TCKit_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		41C53D883D1D8BBD64FECBD0 /* Pods_TCKit_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCKit_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		44D9AC61CAD33600A90C30CD /* Pods_TCKit_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TCKit_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58A195388D20070C39A /* TCKit_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCKit_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -65,7 +68,8 @@
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		806DBE716AF5B67F119F81D3 /* Pods-TCKit_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCKit_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-TCKit_Example/Pods-TCKit_Example.release.xcconfig"; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		F1094D4986CE55F151A609E2 /* TCKit.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = TCKit.podspec; path = ../TCKit.podspec; sourceTree = "<group>"; };
+		C330EB1B3EC44163C76B1197 /* Pods-TCKit_Example-TCKit_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCKit_Example-TCKit_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCKit_Example-TCKit_Tests/Pods-TCKit_Example-TCKit_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		F1094D4986CE55F151A609E2 /* TCKit.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = TCKit.podspec; path = ../TCKit.podspec; sourceTree = "<group>"; };
 		F20DCF62D60D12BBEF3A90DD /* Pods-TCKit_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TCKit_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TCKit_Example/Pods-TCKit_Example.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -89,6 +93,7 @@
 				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
 				8533571FDBC182EB1E86C50F /* Pods_TCKit_Tests.framework in Frameworks */,
+				8DF3C1BF4A9EEA0DA9165D7D /* Pods_TCKit_Example_TCKit_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +130,7 @@
 				6003F5AF195388D20070C39A /* XCTest.framework */,
 				44D9AC61CAD33600A90C30CD /* Pods_TCKit_Example.framework */,
 				41C53D883D1D8BBD64FECBD0 /* Pods_TCKit_Tests.framework */,
+				17BFEF8CD0D73BC4098A463C /* Pods_TCKit_Example_TCKit_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -132,12 +138,8 @@
 		6003F593195388D20070C39A /* Example for TCKit */ = {
 			isa = PBXGroup;
 			children = (
-				6003F59C195388D20070C39A /* TCAppDelegate.h */,
-				6003F59D195388D20070C39A /* TCAppDelegate.m */,
-				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* TCViewController.h */,
 				6003F5A6195388D20070C39A /* TCViewController.m */,
-				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
 			);
@@ -148,9 +150,13 @@
 		6003F594195388D20070C39A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
+				6003F59C195388D20070C39A /* TCAppDelegate.h */,
+				6003F59D195388D20070C39A /* TCAppDelegate.m */,
 				6003F595195388D20070C39A /* TCKit-Info.plist */,
 				6003F596195388D20070C39A /* InfoPlist.strings */,
 				6003F599195388D20070C39A /* main.m */,
+				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F59B195388D20070C39A /* TCKit-Prefix.pch */,
 			);
 			name = "Supporting Files";
@@ -192,6 +198,8 @@
 				806DBE716AF5B67F119F81D3 /* Pods-TCKit_Example.release.xcconfig */,
 				29EBA7B655FF51BD3E25D35A /* Pods-TCKit_Tests.debug.xcconfig */,
 				36A97CCAD52788AB75CA1F45 /* Pods-TCKit_Tests.release.xcconfig */,
+				C330EB1B3EC44163C76B1197 /* Pods-TCKit_Example-TCKit_Tests.debug.xcconfig */,
+				3EC534D5B3C7E116B3FB0A64 /* Pods-TCKit_Example-TCKit_Tests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -309,7 +317,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCKit_Tests/Pods-TCKit_Tests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCKit_Example-TCKit_Tests/Pods-TCKit_Example-TCKit_Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		5C6B02B27232B55A5413890A /* [CP] Embed Pods Frameworks */ = {
@@ -324,7 +332,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCKit_Tests/Pods-TCKit_Tests-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TCKit_Example-TCKit_Tests/Pods-TCKit_Example-TCKit_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		63417330F843ADCA09094639 /* [CP] Copy Pods Resources */ = {
@@ -551,7 +559,7 @@
 		};
 		6003F5C3195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 29EBA7B655FF51BD3E25D35A /* Pods-TCKit_Tests.debug.xcconfig */;
+			baseConfigurationReference = C330EB1B3EC44163C76B1197 /* Pods-TCKit_Example-TCKit_Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -575,7 +583,7 @@
 		};
 		6003F5C4195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 36A97CCAD52788AB75CA1F45 /* Pods-TCKit_Tests.release.xcconfig */;
+			baseConfigurationReference = 3EC534D5B3C7E116B3FB0A64 /* Pods-TCKit_Example-TCKit_Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (

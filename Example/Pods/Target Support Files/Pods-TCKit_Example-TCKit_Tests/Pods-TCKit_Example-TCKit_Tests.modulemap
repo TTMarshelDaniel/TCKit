@@ -1,0 +1,6 @@
+framework module Pods_TCKit_Example_TCKit_Tests {
+  umbrella header "Pods-TCKit_Example-TCKit_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}
