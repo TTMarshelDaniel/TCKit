@@ -11,10 +11,7 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 # Usage
 
-#Request
-
-    
-    #POST Request
+## GET
     
     NSURL *url = [NSURL URLWithString:@""];
     //
@@ -22,7 +19,7 @@ To run the example project, clone the repo, and run `pod install` from the Examp
     request[@"key1"] = @"value1";
     request[@"key2"] = @"value2"; 
     //
-    [request POST:^(TCObject *Object, NSError *error) {
+    [request GET:^(TCObject *Object, NSError *error) {
         //
         if (!error) {
             NSLog(@"Object : %@", Object);
@@ -35,14 +32,15 @@ To run the example project, clone the repo, and run `pod install` from the Examp
         }
     }];
     
-    #GET Request
+## POST
+
     NSURL *url = [NSURL URLWithString:@""];
     //
     TCRequest *request = [TCRequest requestWithURL:url];
     request[@"key1"] = @"value1";
     request[@"key2"] = @"value2"; 
     //
-    [request GET:^(TCObject *Object, NSError *error) {
+    [request POST:^(TCObject *Object, NSError *error) {
         //
         if (!error) {
             NSLog(@"Object : %@", Object);
