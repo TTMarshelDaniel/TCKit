@@ -9,6 +9,56 @@
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
+## Usage
+##GET Request
+NSURL *url = [NSURL URLWithString:@""];
+    //
+    TCRequest *request = [TCRequest requestWithURL:url];
+    request[@"key1"] = @"value1";
+    request[@"key2"] = @"value2";
+    request[@"key3"] = @"value3";
+    request[@"key4"] = @"value4";
+    //
+    [request GET:^(TCObject *Object, NSError *error) {
+        //
+        if (!error) {
+            NSLog(@"Object : %@", Object);
+            //
+            NSArray *userList = Object[@"user_list"].array;
+            TCObject *firstUser = Object[@"user_list"][0].object;
+            NSString *firstUsersName = Object[@"user_list"][0][@"name"].string;
+            //OR
+            NSString *firstUsersName = firstUser[@"name"].string;
+        } else {
+            NSLog(@"error = %@", error);
+        }
+    }];
+    
+    #POST Request
+    
+    NSURL *url = [NSURL URLWithString:@""];
+    //
+    TCRequest *request = [TCRequest requestWithURL:url];
+    request[@"key1"] = @"value1";
+    request[@"key2"] = @"value2";
+    request[@"key3"] = @"value3";
+    request[@"key4"] = @"value4";
+    //
+    [request POST:^(TCObject *Object, NSError *error) {
+        //
+        if (!error) {
+            NSLog(@"Object : %@", Object);
+            //
+            NSArray *userList = Object[@"user_list"].array;
+            TCObject *firstUser = Object[@"user_list"][0].object;
+            NSString *firstUsersName = Object[@"user_list"][0][@"name"].string;
+            //OR
+            NSString *firstUsersName = firstUser[@"name"].string;
+        } else {
+            NSLog(@"error = %@", error);
+        }
+    }];
+
 ## Requirements
 
 ## Installation
@@ -22,7 +72,7 @@ pod "TCKit"
 
 ## Author
 
-ttmdaniel@gmail.com, ttmdaniel@gmail.com
+T T Marshel Daniel, ttmdaniel@gmail.com
 
 ## License
 
