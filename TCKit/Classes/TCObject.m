@@ -727,6 +727,35 @@ static inline NSString *_getTimeStamp() {
 }
 
 @end
+    
+@implementation NSObject (TCObjectable)
+
+- (NSDictionary *)convertToDictionary {
+    //
+    unsigned int outCount, i;
+    NSMutableDictionary *dictionary  = [[NSMutableDictionary alloc] initWithCapacity:1];
+    //
+    objc_property_t *properties = class_copyPropertyList([self class], &outCount);
+    //
+    for (i = 0; i < outCount; i++) {
+        //
+        @autoreleasepool {
+            //
+            objc_property_t property = properties[i];
+            NSString *propertyName = [NSString stringWithUTF8String:property_getName(property)];
+            //
+            id propertyValue = [self valueForKey:(NSString *)propertyName];
+            if (propertyValue) {
+                [dictionary setValue:propertyValue forKey:propertyName];
+            }
+        }
+    }
+    //
+    free(properties);
+    return dictionary ;
+}
+
+@end
 
 @implementation NSDictionary (TCObjectable)
 
