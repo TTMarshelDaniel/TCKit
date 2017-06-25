@@ -1,9 +1,5 @@
 //
-//  TCProtocol.h
-//  Woolah
-//
-//  Created by Admin on 22/03/1939 Saka.
-//  Copyright © 1939 Saka Luecas Aspera Technologies Pvt Ltd. All rights reserved.
+//  Created by T T Marshel Daniel on 05/05/2017.
 //
  
 #import <Foundation/Foundation.h>
@@ -14,27 +10,27 @@
 @protocol TCAllowable <NSObject>@end
 @protocol TCObjectable <NSObject>
 @required
--(NSDictionary *)convertToDictionary;
+-(NSDictionary *__nullable)convertToDictionary;
 @end
 
 @protocol TCGetterKeyed <NSObject>
 @required
--(TCValue *)objectForKeyedSubscript:(id)key;
+-(TCValue *__nullable)objectForKeyedSubscript:(id)key;
 @end
 
 @protocol TCGetterIndexed <NSObject>
 @required
--(TCValue *)objectAtIndexedSubscript:(NSUInteger)idx;
+-(TCValue *__nullable)objectAtIndexedSubscript:(NSUInteger)idx;
 @end
 
 @protocol TCSetterKeyed <NSObject>
 @required
-- (void)setObject:(id<TCAllowable>)obj forKeyedSubscript:(id <NSCopying>)key;
+- (void)setObject:(id<TCAllowable> __nullable)obj forKeyedSubscript:(id <NSCopying>)key;
 @end
 
 @protocol TCSetterIndexed <NSObject>
 @required
-- (void)setObject:(id<TCAllowable>)obj atIndexedSubscript:(NSUInteger)idx;
+- (void)setObject:(id<TCAllowable> __nullable)obj atIndexedSubscript:(NSUInteger)idx;
 @end
 
 @protocol TCLogable <NSObject>
@@ -76,23 +72,24 @@
 @protocol TCValue <NSObject>
 
 @required
-@property (nonatomic, readonly) id rawObject;
+
 @property (nonatomic, readonly) int intValue;
 @property (nonatomic, readonly) BOOL boolValue;
 @property (nonatomic, readonly) float floatValue;
 @property (nonatomic, readonly) double doubleValue;
+@property (nonatomic, readonly, nonnull) id rawObject;
 @property (nonatomic, readonly) NSInteger integer;
-@property (nonatomic, readonly) NSNumber *number;
-@property (nonatomic, readonly) NSString *string;
-@property (nonatomic, readonly) NSArray *array;
-@property (nonatomic, readonly) NSDictionary *dictionary;
-@property (nonatomic, readonly) TCValue *value;
-@property (nonatomic, readonly) TCObject *object;
-@property (nonatomic, readonly) NSArray<TCObject *> *arrayObject;
-@property (nonatomic, readonly) NSArray<TCObject *> *objectArray;
-@property (nonatomic, readonly) Class rawObjectClass;
-@property (nonatomic, readonly) NSString *toString;
-@property (nonatomic, readonly) NSString *stringify;
+@property (nonatomic, readonly, nullable) NSNumber *number;
+@property (nonatomic, readonly, nullable) NSString *string;
+@property (nonatomic, readonly, nullable) NSArray *array;
+@property (nonatomic, readonly, nullable) NSDictionary *dictionary;
+@property (nonatomic, readonly, nullable) TCValue *value;
+@property (nonatomic, readonly, nullable) TCObject *object;
+@property (nonatomic, readonly, nullable) NSArray<TCObject *> *arrayObject;
+@property (nonatomic, readonly, nullable) NSArray<TCObject *> *objectArray;
+@property (nonatomic, readonly, nullable) Class rawObjectClass;
+@property (nonatomic, readonly, nullable) NSString *toString;
+@property (nonatomic, readonly, nullable) NSString *stringify;
 
 @end
 
