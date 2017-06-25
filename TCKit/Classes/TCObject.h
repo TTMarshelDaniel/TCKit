@@ -28,6 +28,7 @@ extern NSTimeInterval TCEpochTime();
 
 #pragma mark -TCObjectable
 
+@interface NSObject (TCObjectable) <TCObjectable>@end
 @interface TCObject (TCObjectable) <TCObjectable>@end
 @interface NSDictionary (TCObjectable) <TCObjectable>@end
 @interface NSData (TCObjectable) <TCObjectable>@end
