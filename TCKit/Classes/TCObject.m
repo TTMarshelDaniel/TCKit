@@ -4,7 +4,6 @@
 
 #import "TCObject.h"
 
-
 static NSString *_TCformattedStringFromNSData(NSData *data) {
     //
     if (!data) return nil;
@@ -59,11 +58,23 @@ static inline NSString *_getTimeStamp() {
     return [NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970] * 1000];
 }
 
+static inline SEL _getSettorForProperty(NSString *property) {
+    //
+    static NSString *prefix = @"set";
+    NSString *property_ = [[property capitalizedString] stringByReplacingOccurrencesOfString:@" " withString:@"_"];
+    NSString *setter = [NSString stringWithFormat:@"%@%@", prefix, property_];
+    //
+    if (setter) return NSSelectorFromString(setter);
+    //
+    return NULL;
+    
+}
+
 
 
 @interface TCObject ()
 
-@property (nonatomic, strong) NSString *_objectId;
+@property (nonatomic, strong, readwrite) NSString *_objectId;
 @property (nonatomic, strong) NSMutableDictionary *_internalObject;
 
 @end
@@ -83,7 +94,6 @@ static inline NSString *_getTimeStamp() {
     //
     return obj;
 }
-
 
 +(instancetype)objectWith:(id<TCObjectable>)object {
     //
@@ -106,6 +116,30 @@ static inline NSString *_getTimeStamp() {
     return obj;
 }
 
+-(void)setObjectId:(NSString *)Id {
+    self._objectId = Id;
+}
+
+-(NSString *)objectId {
+    //
+    NSString *key = [[self class] keyForObjectId];
+    //
+    if (key) {
+        //
+        NSString *value = [self valueForKey:key];
+        if (value) return value;
+        //
+        value = self._internalObject[key];
+        if (value) return value;
+    }
+    //
+    if (__objectId) return __objectId;
+    self._objectId = _getTimeStamp();
+    //
+    return __objectId;
+}
+
+
 +(BOOL)isValidWith:(id<TCObjectable>)object {
     //
     if (!object) return NO;
@@ -121,34 +155,100 @@ static inline NSString *_getTimeStamp() {
     return YES;
 }
 
--(void)setObjectId:(NSString *)Id {
-    self._objectId = Id;
+- (NSArray *)_getters {
+    //
+    NSMutableArray *array = objc_getAssociatedObject([self class], _cmd);
+    if (array) return array;
+    //
+    array = [NSMutableArray array];
+    Class subclass = [self class];
+    //
+    while (subclass != [NSObject class]) {
+        //
+        unsigned int propertyCount;
+        objc_property_t *properties = class_copyPropertyList(subclass, &propertyCount);
+        //
+        for (int i = 0; i < propertyCount; i++) {
+            //
+            objc_property_t property = properties[i];
+            const char *propertyName = property_getName(property);
+            NSString *key = @(propertyName);
+            //
+            char *ivar = property_copyAttributeValue(property, "V");
+            if (ivar) {
+                //
+                NSString *ivarName = @(ivar);
+                //
+                if ([ivarName isEqualToString:key] || [ivarName isEqualToString:[@"_" stringByAppendingString:key]]) {
+                    //
+                    [array addObject:key];
+                }
+                //
+                free(ivar);
+            }
+        }
+        //
+        free(properties);
+        subclass = [subclass superclass];
+    }
+    //
+    objc_setAssociatedObject([self class], _cmd, array, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    //
+    return array;
 }
 
--(NSString *)objectId {
+- (NSArray *)_setters {
     //
-    NSString *key = [[self class] objectIdKey];
+    NSMutableArray *array = objc_getAssociatedObject([self class], _cmd);
+    if (array) return array;
     //
-    if (key) {
+    array = [NSMutableArray array];
+    Class subclass = [self class];
+    //
+    while (subclass != [NSObject class]) {
         //
-        NSString *value = self._internalObject[key];
-        if (value) {
+        unsigned int propertyCount;
+        objc_property_t *properties = class_copyPropertyList(subclass, &propertyCount);
+        //
+        for (int i = 0; i < propertyCount; i++) {
             //
-            if ([value isKindOfClass:[NSNumber class]]) return [(NSNumber *)value stringValue];
-            return value;
+            objc_property_t property = properties[i];
+            const char *propertyName = property_getName(property);
+            NSString *key = @(propertyName);
+            //
+            char *ivar = property_copyAttributeValue(property, "V");
+            if (ivar) {
+                //
+                NSString *ivarName = @(ivar);
+                //
+                if ([ivarName isEqualToString:key] || [ivarName isEqualToString:[@"_" stringByAppendingString:key]]) {
+                    //
+                    [array addObject:key];
+                }
+                //
+                free(ivar);
+            }
         }
-        
-        if (value) return value;
-    }
-    //
-    if (__objectId) {
         //
-        if ([__objectId isKindOfClass:[NSNumber class]]) return [(NSNumber *)__objectId stringValue];
-        return __objectId;
+        free(properties);
+        subclass = [subclass superclass];
     }
-    self._objectId = _getTimeStamp();
     //
-    return __objectId;
+    objc_setAssociatedObject([self class], _cmd, array, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    //
+    NSMutableArray *setters = [NSMutableArray array];
+    for (NSString *p in array) {
+        //
+        SEL setter = _getSettorForProperty(p);
+        if (setter) {
+            //
+            if ([self respondsToSelector:setter]) {
+                [setters addObject:p];
+            }
+        }
+    }
+    //
+    return array;
 }
 
 - (id)copyWithZone:(NSZone *)zone {
@@ -194,267 +294,28 @@ static inline NSString *_getTimeStamp() {
 
 -(NSDictionary *)toDictionary {
     //
-    id obj = self._internalObject;
-    if (![obj isKindOfClass:[NSDictionary class]]) return nil;
+    NSArray *array = [self _getters];
+    NSMutableDictionary *d = [NSMutableDictionary dictionary];
+    for (NSString *p in array) {
+        //
+        id value = [self valueForKey:p];
+        if (value) [d setObject:value forKey:p];
+        else [d setObject:[NSNull null] forKey:p];
+    }
     //
-    return obj;
+    return d;
 }
 
 -(NSString *)stringify {
-    return [NSString stringWithFormat:@"%@", __internalObject];
+    return [NSString stringWithFormat:@"%@", [self toDictionary]];
 }
 
 -(NSString *)description {
-    return [NSString stringWithFormat:@"%@", __internalObject];
+    //
+    return [NSString stringWithFormat:@"%@", [self toDictionary]];;
 }
 
 @end
-
-#pragma mark -TCDiskCacheable
-
-@implementation TCObject (TCDiskCacheable)
-
-- (id)initWithCoder:(NSCoder *)aDecoder {
-    //
-    if (self = [super init]) {
-        //
-        self._internalObject = [aDecoder decodeObjectForKey:@"_internalObject"];
-        self.objectId = [aDecoder decodeObjectForKey:@"objectId"];
-    }
-    //
-    return self;
-}
-
--(void)encodeWithCoder:(NSCoder *)aCoder {
-    //
-    [aCoder encodeObject:self._internalObject forKey:@"_internalObject"];
-    [aCoder encodeObject:self.objectId forKey:@"objectId"];
-}
-
-+(NSString *)_basePath {
-    //
-    NSString *path = [[self rootDirectoryPath] stringByAppendingPathComponent:[self _directoryName]];
-    if ([self _isFileExistsAtPath:path]) return path;
-    //
-    if ([self _createADicrectoryAtPath:path]) return path;
-    //
-    return Nil;
-}
-
-+(BOOL)_createADicrectoryAtPath:(NSString *)path {
-    //
-    return [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
-}
-
-+(NSString *)_fullPathWithFileName:(NSString *)fileName {
-    //
-    NSString *basePath = [self _basePath];
-    NSString *extension = [self _fileExtension];
-    NSString *filePath = [basePath stringByAppendingPathComponent:fileName];
-    //
-    return [filePath stringByAppendingPathExtension:extension];
-}
-
-+(NSString *)_fileExtension {
-    //
-    return @"tc";
-}
-
-+(NSArray<NSString *> *)_fileNamesInDirectoryPath:(NSString *)directoryPath withExtension:(NSString *)extension {
-    //
-    NSString *fileName = nil;
-    NSMutableArray<NSString *> *fileNames = [NSMutableArray array];
-    NSDirectoryEnumerator *dRum = [[NSFileManager defaultManager] enumeratorAtPath:directoryPath];
-    [dRum skipDescendents];
-    //
-    while (fileName = [dRum nextObject]) {
-        //
-        @autoreleasepool {
-            //
-            if ([[fileName pathExtension] isEqualToString:extension]) {
-                //
-                NSString *obj = [fileName stringByDeletingPathExtension];
-                [fileNames addObject:obj];
-            }
-            NSLog(@"%@",directoryPath);
-        }
-    }
-    //
-    return fileNames;
-}
-
-+(BOOL)_isFileExistsAtPath:(NSString *)filePath {
-    //
-    return [[NSFileManager defaultManager] fileExistsAtPath:filePath];
-}
-
-
-+(NSData *)_dataWithFilePath:(NSString *)filePath {
-    //
-    if (!filePath) return nil;
-    return [[NSFileManager defaultManager] contentsAtPath:filePath];
-}
-
-+(BOOL)_saveData:(NSData *)data toFilePath:(NSString *)filePath {
-    //
-    if (!filePath) return nil;
-    return [[NSFileManager defaultManager] createFileAtPath:filePath contents:data attributes:nil];
-}
-
-+(BOOL)_deleteFileAtPath:(NSString *)filePath {
-    //
-    return [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
-}
-
-+(TCObject *)TCObjectFromNSData:(NSData *)data {
-    return [NSKeyedUnarchiver unarchiveObjectWithData:data];
-}
-
-+(NSData *)NSDataFromTCObject:(TCObject *)object {
-    return [NSKeyedArchiver archivedDataWithRootObject:object];
-}
-
-+(NSData *)_objectToData:(NSData *)data {
-    //
-    return nil;
-}
-
-+(NSString *)_directoryName {
-    //
-    return NSStringFromClass([self class]);
-}
-
-+(NSString *)rootDirectoryPath {
-    //
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *cacheDirectory = [paths objectAtIndex:0];
-    return cacheDirectory;
-}
-
-
-+(NSArray<TCObject *> *)allObjects {
-    //
-    NSMutableArray<TCObject *> *collection = [NSMutableArray array];
-    NSArray<NSString *> *fileNames = [self objectIds];
-    //
-    for (NSString *fileName in fileNames) {
-        //
-        @autoreleasepool {
-            //
-            TCObject *object = [self objectWithId:fileName];
-            if (object) [collection addObject:object];
-        }
-    }
-    //
-    if (collection.count < 1) return nil;
-    return collection;
-}
-
-
-
-+(TCObject *)objectWithId:(NSString *)Id {
-    //
-    if (!Id) return nil;
-    NSString *filePath = [self _fullPathWithFileName:Id];
-    if (!filePath) return nil;
-    if (![self _isFileExistsAtPath:filePath]) return nil;
-    //
-    NSData *data = [self _dataWithFilePath:filePath];
-    if (!data) return nil;
-    //
-    id obj = nil;
-    //
-    return obj;
-}
-
-
-+(NSArray<NSString *> *)objectIds {
-    //
-    NSString *basePath = [self _basePath];
-    NSString *extension = [self _fileExtension];
-    NSMutableArray<NSString *> *collection = [NSMutableArray array];
-    //
-    NSArray<NSString *> *fileNames = [[self class] _fileNamesInDirectoryPath:basePath withExtension:extension];
-    //
-    for (NSString *fileName in fileNames) {
-        //
-        @autoreleasepool {
-            //
-            [collection addObject:fileName];
-        }
-    }
-    //
-    if (collection.count < 1) return nil;
-    return collection;
-}
-
-+(BOOL)deleteObjectWithId:(NSString *)objectId {
-    //
-    if (!objectId) return NO;
-    NSString *filePath = [self _fullPathWithFileName:objectId];
-    if (!filePath) return NO;
-    if (![self _isFileExistsAtPath:filePath]) return YES;
-    //
-    return [self _deleteFileAtPath:filePath];
-}
-
--(BOOL)save {
-    return [self saveWithId:self.objectId];
-}
-
--(BOOL)delete {
-    return [[self class] deleteObjectWithId:self.objectId];
-}
-
--(BOOL)saveWithId:(NSString *)objectId {
-    //
-    NSData *data = [[self class] NSDataFromTCObject:self];
-    if (!data) return NO;
-    //
-    NSString *fullPath = [[self class] _fullPathWithFileName:objectId];
-    if (!fullPath) return NO;
-    //
-    return [[self class] _saveData:data toFilePath:fullPath];
-}
-
--(BOOL)saveIntoPath:(NSString *)path withId:(NSString *)objectId {
-    //
-    NSString *extension = [[self class] _fileExtension];
-    NSString *filePath = [path stringByAppendingPathComponent:objectId];
-    NSString *fullpath = [filePath stringByAppendingPathExtension:extension];
-    //
-    NSData *data = [[self class] NSDataFromTCObject:self];
-    if (!data) return NO;
-    //
-    return [[self class] _saveData:data toFilePath:fullpath];
-}
-
-+(TCObject *)objectWithPath:(NSString *)path {
-    //
-    if (!path)  return nil;
-    NSData *data = [self _dataWithFilePath:path];
-    //
-    return [self TCObjectFromNSData:data];
-}
-
-+(TCObject *)objectWithPath:(NSString *)path andId:(NSString *)Id {
-    //
-    NSString *extension = [[self class] _fileExtension];
-    NSString *filePath = [path stringByAppendingPathComponent:Id];
-    NSString *fullpath = [filePath stringByAppendingPathExtension:extension];
-    //
-    NSData *data = [self _dataWithFilePath:fullpath];
-    if (!data) return nil;
-    //
-    return [self TCObjectFromNSData:data];
-}
-
-+(NSString *)objectIdKey {
-    return nil;
-}
-
-@end
-
 
 @implementation TCValue
 
@@ -499,16 +360,14 @@ static inline NSString *_getTimeStamp() {
 -(NSString *)string {
     //
     id obj = __internalObject;
+    if (!obj) return nil;
+    //
     NSString *string = nil;
     //
-    if (obj) {
-        //
-        if ([obj isKindOfClass:[NSString class]]) string = obj;
-        else if ([obj isKindOfClass:[NSNumber class]]) string = [((NSNumber *)obj) stringValue];
-    } else {
-        //
-        return nil;
-    }
+    if ([obj isKindOfClass:[NSString class]]) string = obj;
+    else if ([obj isKindOfClass:[NSNumber class]]) string = [((NSNumber *)obj) stringValue];
+    //
+    if (!string) return nil;
     //
     if ([string isEqualToString:@"0"] || [string isEqualToString:@""] || [string isEqualToString:@" "]) return nil;
     if ([string isEqualToString:@"NULL"] || [string isEqualToString:@"null"] || [string isEqualToString:@"Null"]) return nil;
@@ -641,7 +500,6 @@ static inline NSString *_getTimeStamp() {
     return array;
 }
 
-
 -(NSDictionary *)_dictionaryWithDictionary:(NSDictionary *)dictionary {
     //
     if (!dictionary) return nil;
@@ -685,6 +543,280 @@ static inline NSString *_getTimeStamp() {
 
 @end
 
+#pragma mark -TCDiskCacheable
+
+@implementation TCObject (TCDiskCacheable)
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    //
+    if ((self = [self init])) {
+        //
+        for (NSString *key in [self _getters]) {
+            //
+            id value = [aDecoder decodeObjectForKey:key];
+            [self setValue:value forKey:key];
+        }
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    //
+    for (NSString *key in [self _setters]) {
+        //
+        id value = [self valueForKey:key];
+        [aCoder encodeObject:value forKey:key];
+    }
+}
+
++(NSString *)_basePath {
+    //
+    NSString *basePath = [[self rootDirectoryPath] stringByAppendingPathComponent:[self _directoryName]];
+    if (!basePath) return nil;
+    //
+    BOOL isDirectory = NO;
+    NSFileManager *fb = [NSFileManager defaultManager];
+    //
+    if ([fb fileExistsAtPath:basePath isDirectory:&isDirectory]) {
+        //
+        if (isDirectory) return basePath;
+        //
+        if ([fb createDirectoryAtPath:basePath withIntermediateDirectories:NO attributes:nil error:nil]) {
+            return basePath;
+        }
+    } else {
+        //
+        if ([fb createDirectoryAtPath:basePath withIntermediateDirectories:NO attributes:nil error:nil]) {
+            return basePath;
+        }
+    }
+    //
+    return nil;
+}
+
++(NSString *)_fullPathWithFileName:(NSString *)fileName {
+    //
+    NSString *basePath = [self _basePath];
+    NSString *extension = [self _fileExtension];
+    NSString *filePath = [basePath stringByAppendingPathComponent:fileName];
+    //
+    return [filePath stringByAppendingPathExtension:extension];
+}
+
++(NSString *)_fileExtension {
+    //
+    return @"tc";
+}
+
++(NSArray<NSString *> *)_fileNamesInDirectoryPath:(NSString *)directoryPath withExtension:(NSString *)extension {
+    //
+    NSString *fileName = nil;
+    NSMutableArray<NSString *> *fileNames = [NSMutableArray array];
+    NSDirectoryEnumerator *dRum = [[NSFileManager defaultManager] enumeratorAtPath:directoryPath];
+    [dRum skipDescendents];
+    //
+    while (fileName = [dRum nextObject]) {
+        //
+        @autoreleasepool {
+            //
+            if ([[fileName pathExtension] isEqualToString:extension]) {
+                //
+                NSString *obj = [fileName stringByDeletingPathExtension];
+                [fileNames addObject:obj];
+            }
+            NSLog(@"%@",directoryPath);
+        }
+    }
+    //
+    return fileNames;
+}
+
++(BOOL)_isFileExistsAtPath:(NSString *)filePath {
+    //
+    return [[NSFileManager defaultManager] fileExistsAtPath:filePath];
+}
+
+
++(NSData *)_dataWithFilePath:(NSString *)filePath {
+    //
+    if (!filePath) return nil;
+    return [[NSFileManager defaultManager] contentsAtPath:filePath];
+}
+
++(BOOL)_saveData:(NSData *)data toFilePath:(NSString *)filePath {
+    //
+    if (!filePath) return nil;
+    return [[NSFileManager defaultManager] createFileAtPath:filePath contents:data attributes:nil];
+}
+
++(BOOL)_deleteFileAtPath:(NSString *)filePath {
+    //
+    return [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+}
+
++(TCObject *)TCObjectFromNSData:(NSData *)data {
+    //
+    if (!data) return nil;
+    id obj = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    if ([obj isKindOfClass:[TCObject class]]) return obj;
+    //
+    return nil;
+}
+
++(NSData *)NSDataFromTCObject:(TCObject *)object {
+    //
+    if (!object) return nil;
+    return [NSKeyedArchiver archivedDataWithRootObject:object];
+}
+
++(NSString *)_directoryName {
+    //
+    return NSStringFromClass([self class]);
+}
+
++(NSString *)rootDirectoryPath {
+    //
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *cacheDirectory = [paths objectAtIndex:0];
+    return cacheDirectory;
+}
+
+
++(NSArray<TCObject *> *)allObjects {
+    //
+    NSMutableArray<TCObject *> *collection = [NSMutableArray array];
+    NSArray<NSString *> *fileNames = [self objectIds];
+    //
+    for (NSString *fileName in fileNames) {
+        //
+        @autoreleasepool {
+            //
+            TCObject *object = [self objectWithId:fileName];
+            if (object) [collection addObject:object];
+        }
+    }
+    //
+    if (collection.count < 1) return nil;
+    return collection;
+}
+
++(instancetype)objectWithId:(NSString *)Id {
+    //
+    if (!Id) return nil;
+    NSString *filePath = [self _fullPathWithFileName:Id];
+    //
+    NSData *data = [self _dataWithFilePath:filePath];
+    if (!data) return nil;
+    //
+    id obj = [[self class] TCObjectFromNSData:data];
+    //
+    return obj;
+}
+
++(NSArray<NSString *> *)objectIds {
+    //
+    NSString *basePath = [self _basePath];
+    NSString *extension = [self _fileExtension];
+    NSMutableArray<NSString *> *collection = [NSMutableArray array];
+    //
+    NSArray<NSString *> *fileNames = [[self class] _fileNamesInDirectoryPath:basePath withExtension:extension];
+    //
+    for (NSString *fileName in fileNames) {
+        //
+        @autoreleasepool {
+            //
+            [collection addObject:fileName];
+        }
+    }
+    //
+    if (collection.count < 1) return nil;
+    return collection;
+}
+
++(BOOL)deleteObjectWithId:(NSString *)objectId {
+    //
+    if (!objectId) return NO;
+    NSString *filePath = [self _fullPathWithFileName:objectId];
+    if (!filePath) return NO;
+    if (![self _isFileExistsAtPath:filePath]) return YES;
+    //
+    return [self _deleteFileAtPath:filePath];
+}
+
+-(BOOL)save {
+    return [self saveWithId:self.objectId];
+}
+
+-(BOOL)delete {
+    return [[self class] deleteObjectWithId:self.objectId];
+}
+
+-(NSString *)saveAndgetObjectId {
+    //
+    NSString *objectId = self.objectId;
+    if ([self saveWithId:objectId]) return objectId;
+    //
+    return nil;
+}
+
+-(NSString *)deleteAndgetObjectId {
+    //
+    NSString *objectId = self.objectId;
+    if ([[self class] deleteObjectWithId:objectId]) return objectId;
+    //
+    return nil;
+}
+
+-(BOOL)saveWithId:(NSString *)objectId {
+    //
+    NSData *data = [[self class] NSDataFromTCObject:self];
+    if (!data) return NO;
+    //
+    NSString *fullPath = [[self class] _fullPathWithFileName:objectId];
+    if (!fullPath) return NO;
+    //
+    BOOL flag = [[self class] _saveData:data toFilePath:fullPath];
+    return flag;
+}
+
+-(BOOL)saveIntoPath:(NSString *)path withId:(NSString *)objectId {
+    //
+    NSString *extension = [[self class] _fileExtension];
+    NSString *filePath = [path stringByAppendingPathComponent:objectId];
+    NSString *fullpath = [filePath stringByAppendingPathExtension:extension];
+    //
+    NSData *data = [[self class] NSDataFromTCObject:self];
+    if (!data) return NO;
+    //
+    return [[self class] _saveData:data toFilePath:fullpath];
+}
+
++(instancetype)objectWithPath:(NSString *)path {
+    //
+    if (!path)  return nil;
+    NSData *data = [self _dataWithFilePath:path];
+    //
+    return [self TCObjectFromNSData:data];
+}
+
++(instancetype)objectWithPath:(NSString *)path andId:(NSString *)Id {
+    //
+    NSString *extension = [[self class] _fileExtension];
+    NSString *filePath = [path stringByAppendingPathComponent:Id];
+    NSString *fullpath = [filePath stringByAppendingPathExtension:extension];
+    //
+    NSData *data = [self _dataWithFilePath:fullpath];
+    if (!data) return nil;
+    //
+    return [self TCObjectFromNSData:data];
+}
+
++(NSString *)keyForObjectId {
+    return nil;
+}
+
+@end
+
 
 #pragma mark -TCAllowable
 
@@ -709,12 +841,20 @@ static inline NSString *_getTimeStamp() {
 @end
 
 @implementation TCObject (TCAllowable)
--(void)log { NSLog(@"%@ = %@", NSStringFromClass([__internalObject class]), self._internalObject); }
--(void)logWithTag:(NSString *)tag { NSLog(@"%@ : %@ = %@", tag, NSStringFromClass([__internalObject class]), self._internalObject); }
+
+-(void)log {
+    //
+    NSLog(@"%@ = %@ ", NSStringFromClass([self class]), self.stringify);
+}
+
+-(void)logWithTag:(NSString *)tag {
+    NSLog(@"%@ : %@ = %@", tag, NSStringFromClass([self class]), self.stringify);
+}
+
 @end
 
 @implementation TCValue (TCAllowable)
--(void)log { NSLog(@"%@ = %@", NSStringFromClass([__internalObject class]), self._internalObject); }
+-(void)log { NSLog(@"%@ = %@", NSStringFromClass([self class]), self._internalObject); }
 -(void)logWithTag:(NSString *)tag { NSLog(@"%@ : %@ = %@", tag, NSStringFromClass([__internalObject class]), self._internalObject); }
 @end
 
@@ -727,7 +867,7 @@ static inline NSString *_getTimeStamp() {
 }
 
 @end
-    
+
 @implementation NSObject (TCObjectable)
 
 - (NSDictionary *)convertToDictionary {
@@ -761,9 +901,7 @@ static inline NSString *_getTimeStamp() {
 
 -(NSDictionary *)convertToDictionary {
     //
-    if ([self isKindOfClass:[NSDictionary class]]) return self;
-    //
-    return nil;
+    return self;
 }
 
 @end
