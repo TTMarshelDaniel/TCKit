@@ -15,7 +15,7 @@ extern NSTimeInterval TCEpochTime();
 +(instancetype)valueWith:(id<TCAllowable>)anyObject;
 @end
 
-@interface TCObject : NSObject<TCObject, TCGetterKeyed, TCSetterKeyed>
+@interface TCObject :NSObject<TCObject, TCGetterKeyed, TCSetterKeyed>
 
 +(instancetype)object;
 +(instancetype)objectWith:(id<TCObjectable>)object;
@@ -28,8 +28,8 @@ extern NSTimeInterval TCEpochTime();
 
 #pragma mark -TCObjectable
 
-@interface NSObject (TCObjectable) <TCObjectable>@end
 @interface TCObject (TCObjectable) <TCObjectable>@end
+@interface NSObject (TCObjectable) <TCObjectable>@end
 @interface NSDictionary (TCObjectable) <TCObjectable>@end
 @interface NSData (TCObjectable) <TCObjectable>@end
 @interface NSString (TCObjectable) <TCObjectable>@end
