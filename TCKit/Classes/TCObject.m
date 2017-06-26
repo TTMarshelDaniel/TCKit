@@ -253,15 +253,16 @@ static inline SEL _getSettorForProperty(NSString *property) {
 
 - (id)copyWithZone:(NSZone *)zone {
     //
-    NSDictionary *copy = [NSDictionary dictionaryWithDictionary:__internalObject];
-    return [TCObject objectWith:copy];
+    NSData *data = [[self class] NSDataFromTCObject:self];
+    return [[self class] TCObjectFromNSData:data];
 }
 
 -(id)mutableCopyWithZone:(NSZone *)zone {
     //
-    NSDictionary *copy = [NSDictionary dictionaryWithDictionary:__internalObject];
-    return [TCObject objectWith:copy];
+    NSData *data = [[self class] NSDataFromTCObject:self];
+    return [[self class] TCObjectFromNSData:data];
 }
+
 
 -(TCValue *)objectForKeyedSubscript:(id)key {
     //
